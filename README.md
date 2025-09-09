@@ -65,7 +65,7 @@ Carta-Lalaland/
 **1. Clona este repositorio:**
 
 ```bash
-git clone https://github.com/Charls-Leo/Carta-lalaland.git
+git clone https://github.com/Charls-Leo/Carta-Lalaland.git
 ```
 
 **2. Abre el archivo index.html en tu navegador.**
