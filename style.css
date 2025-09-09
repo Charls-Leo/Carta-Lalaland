@@ -1,0 +1,223 @@
+:root{
+  --paper:#fffaf0;
+  --ink:#2d1e0f;
+  --seal:#9b2c2c;
+  --bg: radial-gradient(1200px 600px at 50% -10%, rgba(255,255,255,.9), transparent),
+        linear-gradient(135deg,#fdfbfb,#ebedee);
+
+  /* Ajustes rápidos */
+  --envelope-max: 340px;   /* tamaño máx del sobre en pantallas grandes */
+  --letter-max:   400px;   /* ancho máx de la carta (imagen) */
+  --page-pad:       16px;  /* padding alrededor de #gate y #content */
+}
+
+*{ box-sizing:border-box }
+html,body{ height:100% }
+html, body{ overflow-x:hidden }        /* evita scroll lateral por sombras */
+body{
+  margin:0;
+  font-family:Inter,system-ui,Segoe UI,Roboto,sans-serif;
+  color:#222;
+  background:var(--bg);
+}
+.no-scroll{ overflow:hidden }
+.hidden{ display:none !important; }
+
+/* ===== Pantallas del sobre (#gate) y de la carta (#content) ===== */
+#gate,
+#content{
+  display:flex;                      /* centra contenido */
+  justify-content:center;
+  align-items:center;                /* verticalmente centrado */
+  min-height:100svh;                 /* alto pantalla en móviles modernos */
+  padding:var(--page-pad);
+  flex-direction: column;
+}
+
+/* ---------- Sobre ---------- */
+.envelope{
+  position:relative;
+  width: clamp(240px, 74vw, var(--envelope-max));  /* adaptable */
+  aspect-ratio: 4 / 3;              /* mantiene proporción */
+  height:auto;
+  perspective:1200px;
+  transform-style: preserve-3d;
+  animation: float 4s ease-in-out infinite;
+  will-change: transform;
+  isolation:isolate;
+}
+@keyframes float{
+  0% { transform: translateY(0) }
+  50%{ transform: translateY(-6px) }
+  100%{ transform: translateY(0) }
+}
+
+/* Fondo del sobre */
+.base{
+  position:absolute; inset:0; border-radius:0px;
+  background:linear-gradient(#efe3cc,#e3d4b6);
+  box-shadow:0 18px 40px rgba(0,0,0,.18);
+  z-index:1;
+  overflow:hidden;
+}
+
+/* Bolsillo frontal (tapa la carta) */
+.front{
+  position:absolute;
+  left:0; right:0; top:10%; bottom:0; /* altura de bolsillo */
+  background:linear-gradient(#e8d9bb,#d7c49e);
+  border-radius:0 0 0px 0px;
+  z-index:3;
+  pointer-events:none;
+}
+
+/* Solapa superior (arriba al inicio) */
+.flap{
+  position:absolute; left:0; right:0; top:0; height:60%;
+  background:linear-gradient(#e6d6b7,#d6c39d);
+  clip-path:polygon(0 0,100% 0,50% 100%);
+  transform-origin:50% 0%;
+  z-index:4;
+  will-change: transform;
+}
+
+/* Carta interna (sólo para la animación del sobre) */
+.letter{
+  position:absolute; left:6%; right:6%; top:22%; height:70%;
+  background:var(--paper);
+  border-radius:0px;
+  border:1px solid rgba(0,0,0,.06);
+  z-index:2;
+  will-change: transform;
+}
+
+/* Sello y texto de ayuda */
+.seal{
+  position:absolute; top:52%; left:50%; transform:translate(-50%,-50%);
+  width:64px; height:64px; border-radius:999px; border:none;
+  background:var(--seal); color:#fff; font-size:24px; cursor:pointer;
+  z-index:5; box-shadow:0 10px 20px rgba(155, 44, 44, 0.109)
+}
+.seal::after{ content:""; position:absolute; inset:12px; border:2px dashed rgba(255,255,255,.6); border-radius:50% }
+.seal:hover{ filter:brightness(1.05) }
+
+.hint-tap{
+  margin-top: 10px;
+  width: 100%;
+  text-align: center;
+  font-size: 13px;
+  color:#444;
+  opacity:.85;
+  /* (opcional) pequeño parpadeo para llamar la atención */
+  animation: hintBlink 2.2s ease-in-out infinite;
+}
+
+@keyframes hintBlink{
+  0%,100%{ opacity:.85 }
+  50%    { opacity:.45 }
+}
+
+/* ---------- Modal contraseña ---------- */
+.modal{ position:fixed; inset:0; background:rgba(0,0,0,.5); display:grid; place-items:center; padding:24px }
+.modal.hidden{ display:none !important; }
+.dialog{ background:#fff; width:min(92vw, 360px); border-radius:16px; padding:24px; box-shadow:0 20px 60px rgba(0,0,0,.35) }
+.dialog h3{ margin:0 0 10px; font-family:"Playfair Display", serif }
+.dialog input{ width:100%; padding:12px 14px; font-size:16px; border-radius:10px; border:1px solid #ddd }
+.dialog button{ margin-top:12px; width:100%; padding:12px 14px; font-size:16px; border-radius:10px; border:none; background:#111827; color:#fff; cursor:pointer }
+.dialog .error{ color:#b91c1c; font-size:13px; min-height:1.4em }
+.shake{ animation:shake .4s linear }
+@keyframes shake{ 0%,100%{transform:translateX(0)} 25%{transform:translateX(-6px)} 75%{transform:translateX(6px)} }
+
+
+/* ---------- Carta como imagen (uso actual) ---------- */
+.letter-image{
+  width:100%;
+  display:flex;
+  justify-content:center;      /* centrada horizontal */
+  align-items:center;          /* centrada vertical */
+}
+.letter-image img{
+  max-width: clamp(280px, 88vw, var(--letter-max)); /* adaptable */
+  width:100%;
+  height:auto;
+  display:block;
+  margin:0 auto;
+  box-shadow:0 10px 40px rgba(0, 0, 0, 0.2);
+  border-radius:4px;
+}
+
+/* --------- Ajustes móviles --------- */
+@media (max-width:480px){
+  .seal{ width:60px; height:60px; font-size:22px }
+}
+@media (max-width:360px){
+  :root{ --page-pad: 12px; }
+  .letter-image img{ max-width: 94vw; border-radius:3px; }
+}
+
+/* Reduce motion */
+@media (prefers-reduced-motion: reduce){
+  *{
+    animation-duration:.01ms !important;
+    animation-iteration-count:1 !important;
+    transition-duration:0.01ms !important;
+    scroll-behavior:auto !important;
+  }
+}
+
+/* #content debe posicionar a sus hijos absolutos (el fondo) */
+#content{ position: relative; }
+
+/* Fondo SOLO para el área de la carta */
+.page-bg{
+  position: absolute; inset: 0;
+  z-index: -1;                    /* detrás de la carta */
+  background-image: url("img/fondo.jpg");
+  background-size: cover;
+  background-position: center;
+  background-repeat: no-repeat;
+  pointer-events: none;
+
+  /* Estado inicial (oculto y un pelín ampliado) */
+  opacity: 0;
+  transform: scale(1.02);
+  transition: opacity .6s ease, transform .8s ease;
+}
+
+/* Al revelar el contenido, hacemos un fade + mini-zoom-in */
+.page-bg.show{
+  opacity: 1;
+  transform: scale(1);
+}
+
+/* Si el fondo te queda muy intenso, añade un velo suave: */
+.page-bg::after{
+  content:"";
+  position:absolute; inset:0;
+  background: linear-gradient(rgba(255,255,255,.18), rgba(255,255,255,.18));
+}
+
+/* La carta puede rotar un poquito en 3D (solo desktop) */
+.letter-image{ perspective: 1000px; }
+.letter-image img{
+  transform-origin: 50% 60%;
+  will-change: transform, box-shadow, opacity;
+}
+
+/* Sombra "breathe" muy sutil (solo al inicio) */
+@keyframes breatheShadow {
+  0%   { box-shadow: 0 10px 40px rgba(0,0,0,.20); }
+  50%  { box-shadow: 0 14px 48px rgba(0,0,0,.24); }
+  100% { box-shadow: 0 10px 40px rgba(0,0,0,.20); }
+}
+.letter-breathe{
+  animation: breatheShadow 4s ease-in-out 2; /* ~8s total y se detiene */
+}
+
+@media (prefers-reduced-motion: reduce){
+  .letter-breathe{ animation: none; }
+}
+
+
+
+
